@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./css/main.css">
+  <title>Lift Stimulator</title>
+</head>
+
+<body>
+  <div class="liftStimulationForm">
+    <h1>Lift Stimulator</h1>
+    <div class="formFields">
+      <label for="noOfFloors">How many floors?</label>
+      <input type="number" id="noOfFloors" min="1">
+    </div>
+    <div class="formFields">
+      <label for="noOfLifts">How many lifts?</label>
+      <input type="number" id="noOfLifts" min="1">
+    </div>
+
+    <button id="stimulate" onClick="stimulate()">Stimulate</button>
+    <div class="stimulationError"></div>
+  </div>
+  <div class="building" id="building">
+  </div>
+  </div>
+  <script src="./js/main.js"></script>
+</body>
+
+</html>

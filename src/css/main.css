@@ -1,0 +1,51 @@
+.floor{
+    display:flex; align-items: center; justify-content: space-between;
+    padding: 2rem;
+    border-bottom: 1px solid black;
+}
+.btnContainer{
+    display:flex; 
+    flex-direction: column;
+}
+.liftButton{
+    border: 1px solid;
+    box-shadow: 1px 2px;
+    text-align: center;
+    margin: 6px;
+    padding: 2px;
+    cursor: pointer;
+    font-size: 10px;
+}
+.liftContainer{
+    display:flex; align-items: center; justify-content: space-between;
+    padding: 2rem;
+}
+.lift{
+    width: 30px;
+    height: 60px;
+    background: antiquewhite;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    font-size: 10px;
+}
+@media screen and (max-width: 480px) {
+    .floorNo{
+        font-size: 12px;
+    }
+  }
+/* Form Fields */
+  .liftStimulationForm{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+  }
+  .stimulationError{
+    color: red;
+    padding: 1rem;
+  }
+  .formFields{
+    padding: 2rem;
+  }
