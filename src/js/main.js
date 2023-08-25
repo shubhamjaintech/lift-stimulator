@@ -18,7 +18,7 @@ const updateLiftsState = (liftId, isMoving, floor) => {
         }
     }
 }
-const findNearestAvailableLiftId = (targetFloor) => {
+const findNearestAvailableLift = (targetFloor) => {
     let unAvailableLifts = liftsState.filter((lift) => lift.isMoving === false);
     if (unAvailableLifts.length === 0) return -1;
 
@@ -32,25 +32,53 @@ const findNearestAvailableLiftId = (targetFloor) => {
             minDistance = distance;
         }
     }
-    return closestLift.id;
+    return closestLift;
 
 }
-const callLift = (targetFloor) => {
-    console.log(targetFloor);
-    const targetFloorEl = document.getElementById(`floor${targetFloor}`);
-    const nearestLiftId = findNearestAvailableLiftId(targetFloor);
-    updateLiftsState(nearestLiftId, true, targetFloor)
+const openDoor = (nearestLiftEl) => {
+    nearestLiftEl.classList.add('liftDoorOpen');
+};
+
+const closeDoor = (nearestLiftEl) => {
+    nearestLiftEl.classList.remove('liftDoorOpen');
+};
+
+const moveLift = (nearestLiftEl, distanceToBeTravelled) => {
+    nearestLiftEl.style.transform = `translateY(${distanceToBeTravelled}px)`;
+    nearestLiftEl.style.transition = 'transform 2s ease';
+};
+
+const waitForTime = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+const callLift = async (targetFloor) => {
+    const liftObj = findNearestAvailableLift(targetFloor);
+    const nearestLiftId = liftObj.id;
+    const floorDiff = targetFloor - liftObj.currentFloor;
     const nearestLiftEl = document.getElementById(nearestLiftId);
     if (nearestLiftEl !== null) {
-        const distanceToBeTravelled = (targetFloorEl.offsetTop + targetFloorEl.offsetHeight) - (nearestLiftEl.offsetTop + nearestLiftEl.offsetHeight) - 1;
-        console.log(distanceToBeTravelled);
-        nearestLiftEl.style = `transform: translateY(${distanceToBeTravelled}px); transition: transform 2s ease`
+        const oldTransformStr = nearestLiftEl.style.transform;
+        const oldPos = oldTransformStr ? parseInt(oldTransformStr.match(/translateY\((-?\d+)px\)/)[1]) : 0;
+        const distanceToBeTravelled = oldPos - (floorDiff * 164);
 
-        setTimeout(() => {
-            updateLiftsState(nearestLiftId, false, targetFloor)
-        }, 2000)
+        updateLiftsState(nearestLiftId, true, targetFloor);
+
+        if (floorDiff === 0) {
+            openDoor(nearestLiftEl);
+            closeDoor(nearestLiftEl);
+            await waitForTime(2500);
+            updateLiftsState(nearestLiftId, false, targetFloor);
+        } else {
+            moveLift(nearestLiftEl, distanceToBeTravelled);
+            await waitForTime(2000);
+            openDoor(nearestLiftEl);
+            await waitForTime(2500);
+            closeDoor(nearestLiftEl);
+
+            updateLiftsState(nearestLiftId, false, targetFloor);
+        }
     }
-}
+};
+
 const generateBuildingLayout = (noOfFloors, noOfLifts, buildingEl) => {
     const floorContainerEl = document.createElement('div');
     floorContainerEl.classList.add("floorContainer");
@@ -73,7 +101,7 @@ const generateBuildingLayout = (noOfFloors, noOfLifts, buildingEl) => {
     }
 
     for (let i = 0; i < noOfLifts; i++) {
-        liftHtml += `<div class="lift" id="lift${i}"> Lift ${i} </div>`
+        liftHtml += `<div class="lift" id="lift${i}"> <div class="leftDoor"></div> Lift ${i} <div class="rightDoor"></div>  </div>`
     }
     floorContainerEl.innerHTML += floorHtml;
     liftContainerEl.innerHTML += (`<div></div>` + liftHtml + `<div></div>`);
