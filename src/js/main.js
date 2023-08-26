@@ -23,7 +23,13 @@ const updateLiftsState = (liftId, isMoving, floor) => {
     }
 }
 const findNearestLift = (targetFloor) => {
-    let availableLifts = liftsState.filter((lift) => lift.isMoving === false);
+    let availableLifts;
+    if (isTargetFloorAlreadyContainsLift(targetFloor)) {
+        availableLifts = liftsState;
+    }
+    else {
+        availableLifts = liftsState.filter((lift) => lift.isMoving === false);
+    }
     if (availableLifts.length === 0) return null;
     let minDistance = Infinity;
     let nearestLift = null;
@@ -65,21 +71,20 @@ const processQueuedRequests = async () => {
         let targetFloor = processQueue.shift();
         let liftObj = findNearestLift(targetFloor);
         if (liftObj !== null && targetFloor !== null) {
-            const nextFloor = targetFloor;
-            const floorDiff = nextFloor - liftObj.currentFloor;
+            const floorDiff = targetFloor - liftObj.currentFloor;
             const nearestLiftEl = document.getElementById(liftObj.id);
 
             if (nearestLiftEl !== null) {
                 const oldTransformStr = nearestLiftEl.style.transform;
                 const oldPos = oldTransformStr ? parseInt(oldTransformStr.match(/translateY\((-?\d+)px\)/)[1]) : 0;
                 const distanceToBeTravelled = oldPos - (floorDiff * 165);
-                updateLiftsState(liftObj.id, true, nextFloor);
+                updateLiftsState(liftObj.id, true, targetFloor);
                 if (floorDiff === 0) {
-                    openAndCloseDoor(nearestLiftEl, liftObj.id, nextFloor);
+                    openAndCloseDoor(nearestLiftEl, liftObj.id, targetFloor);
                 } else {
                     moveLift(nearestLiftEl, distanceToBeTravelled, Math.abs(floorDiff));
                     await waitForTime(2000 * Math.abs(floorDiff)).then(async () => {
-                        await openAndCloseDoor(nearestLiftEl, liftObj.id, nextFloor);
+                        await openAndCloseDoor(nearestLiftEl, liftObj.id, targetFloor);
                     });
                 }
             }
@@ -104,7 +109,7 @@ const isTargetFloorAlreadyContainsLift = (targetFloor) => {
     return false;
 }
 const callLift = async (targetFloor) => {
-    if (isProcessQueueAlreadyContainRequest(targetFloor) || isTargetFloorAlreadyContainsLift(targetFloor)) {
+    if (isProcessQueueAlreadyContainRequest(targetFloor)) {
         return;
     }
     processQueue.push(targetFloor);
@@ -154,7 +159,7 @@ const getErrorMsg = (noOfFloors, noOfLifts) => {
     else if (noOfFloors > 10 || noOfLifts > 10) {
         errorMsg = 'No. of floors/lifts should be <= 10'
     }
-    else if (noOfFloors < noOfLifts ) {
+    else if (noOfFloors < noOfLifts) {
         errorMsg = 'Number. of Lift should be <= No. of Floors '
     }
     return errorMsg;
