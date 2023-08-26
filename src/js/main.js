@@ -157,10 +157,10 @@ const getErrorMsg = (noOfFloors, noOfLifts) => {
         errorMsg = 'Please enter valid field values'
     }
     else if (noOfFloors > 10 || noOfLifts > 10) {
-        errorMsg = 'No. of floors/lifts should be <= 10'
+        errorMsg = 'No. of Floors and Lifts should be <= 10'
     }
     else if (noOfFloors < noOfLifts) {
-        errorMsg = 'Number. of Lift should be <= No. of Floors '
+        errorMsg = 'No. of Lifts should be <= No. of Floors '
     }
     return errorMsg;
 }
