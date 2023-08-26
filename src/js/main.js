@@ -61,7 +61,6 @@ const openAndCloseDoor = async (nearestLiftEl, nearestLiftId, targetFloor) => {
     processQueuedRequests();
 }
 const processQueuedRequests = async () => {
-
     if (!processQueue.length == 0) {
         let targetFloor = processQueue.shift();
         let liftObj = findNearestLift(targetFloor);
@@ -96,8 +95,16 @@ const isProcessQueueAlreadyContainRequest = (targetFloor) => {
     }
     return false;
 }
+const isTargetFloorAlreadyContainsLift = (targetFloor) => {
+    for (let i = 0; i < liftsState.length; i++) {
+        if (liftsState[i].currentFloor === targetFloor) {
+            return true;
+        }
+    }
+    return false;
+}
 const callLift = async (targetFloor) => {
-    if (isProcessQueueAlreadyContainRequest(targetFloor)) {
+    if (isProcessQueueAlreadyContainRequest(targetFloor) || isTargetFloorAlreadyContainsLift(targetFloor)) {
         return;
     }
     processQueue.push(targetFloor);
@@ -148,7 +155,7 @@ const getErrorMsg = (noOfFloors, noOfLifts) => {
         errorMsg = 'No. of floors/lifts should be <= 10'
     }
     else if (noOfFloors < noOfLifts ) {
-        errorMsg = 'Number. of Lift should be < No. of Floors '
+        errorMsg = 'Number. of Lift should be <= No. of Floors '
     }
     return errorMsg;
 }
