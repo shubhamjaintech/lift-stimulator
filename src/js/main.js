@@ -15,6 +15,7 @@ const initializeLiftsState = (noOfLifts) => {
     liftsState = getDefaultliftsState(noOfLifts);
 };
 const updateLiftsState = (liftId, isMoving, floor) => {
+    console.log('OldLiftState', liftsState);
     for (let i = 0; i < liftsState.length; i++) {
         if (liftsState[i].id === liftId) {
             liftsState[i].isMoving = isMoving;
@@ -80,7 +81,7 @@ const processQueuedRequests = async () => {
                 const distanceToBeTravelled = oldPos - (floorDiff * 165);
                 updateLiftsState(liftObj.id, true, targetFloor);
                 if (floorDiff === 0) {
-                    openAndCloseDoor(nearestLiftEl, liftObj.id, targetFloor);
+                    await openAndCloseDoor(nearestLiftEl, liftObj.id, targetFloor);
                 } else {
                     moveLift(nearestLiftEl, distanceToBeTravelled, Math.abs(floorDiff));
                     await waitForTime(2000 * Math.abs(floorDiff)).then(async () => {
