@@ -1,6 +1,6 @@
 let liftsState;
 let processQueue = [];
-const getDefaultliftsState = (noOfLifts) => {
+const getDefaultLiftsState = (noOfLifts) => {
     let lifts = [];
     for (let i = 0; i < noOfLifts; i++) {
         lifts.push({
@@ -12,10 +12,9 @@ const getDefaultliftsState = (noOfLifts) => {
     return lifts;
 };
 const initializeLiftsState = (noOfLifts) => {
-    liftsState = getDefaultliftsState(noOfLifts);
+    liftsState = getDefaultLiftsState(noOfLifts);
 };
 const updateLiftsState = (liftId, isMoving, floor) => {
-    console.log('OldLiftState', liftsState);
     for (let i = 0; i < liftsState.length; i++) {
         if (liftsState[i].id === liftId) {
             liftsState[i].isMoving = isMoving;
@@ -27,8 +26,7 @@ const findNearestLift = (targetFloor) => {
     let availableLifts;
     if (isTargetFloorAlreadyContainsLift(targetFloor)) {
         availableLifts = liftsState;
-    }
-    else {
+    }else {
         availableLifts = liftsState.filter((lift) => lift.isMoving === false);
     }
     if (availableLifts.length === 0) return null;
@@ -59,16 +57,8 @@ const moveLift = (nearestLiftEl, distanceToBeTravelled, floorDiff) => {
 
 const waitForTime = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-const openAndCloseDoor = async (nearestLiftEl, nearestLiftId, targetFloor) => {
-    openDoor(nearestLiftEl);
-    await waitForTime(2500);
-    closeDoor(nearestLiftEl);
-    await waitForTime(2500);
-    updateLiftsState(nearestLiftId, false, targetFloor);
-    processQueuedRequests();
-}
 const processQueuedRequests = async () => {
-    if (!processQueue.length == 0) {
+    if (processQueue.length !== 0) {
         let targetFloor = processQueue.shift();
         let liftObj = findNearestLift(targetFloor);
         if (liftObj !== null && targetFloor !== null) {
@@ -93,6 +83,15 @@ const processQueuedRequests = async () => {
 
     }
 }
+const openAndCloseDoor = async (nearestLiftEl, nearestLiftId, targetFloor) => {
+    openDoor(nearestLiftEl);
+    await waitForTime(2500);
+    closeDoor(nearestLiftEl);
+    await waitForTime(2500);
+    updateLiftsState(nearestLiftId, false, targetFloor);
+    await processQueuedRequests();
+}
+
 const isProcessQueueAlreadyContainRequest = (targetFloor) => {
     for (let i = 0; i < processQueue.length; i++) {
         if (processQueue[i] === targetFloor) {
@@ -118,7 +117,7 @@ const callLift = async (targetFloor) => {
     if (availableLifts.length === 0 || processQueue.length > 1) {
         return;
     }
-    processQueuedRequests();
+    await processQueuedRequests();
 }
 
 const generateBuildingLayout = (noOfFloors, noOfLifts, buildingEl) => {
