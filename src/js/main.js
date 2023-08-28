@@ -24,11 +24,11 @@ const updateLiftsState = (liftId, isMoving, floor) => {
 }
 const findNearestLift = (targetFloor) => {
     let availableLifts;
-    if (isTargetFloorAlreadyContainsLift(targetFloor)) {
-        availableLifts = liftsState;
-    }else {
-        availableLifts = liftsState.filter((lift) => lift.isMoving === false);
-    }
+    // const abc = isTargetFloorAlreadyContainsLift(targetFloor);
+    // if (abc) {
+    //     return abc;
+    // }
+    availableLifts = liftsState.filter((lift) => lift.isMoving === false);
     if (availableLifts.length === 0) return null;
     let minDistance = Infinity;
     let nearestLift = null;
@@ -59,28 +59,25 @@ const waitForTime = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 const processQueuedRequests = async () => {
     if (processQueue.length !== 0) {
-        let targetFloor = processQueue.shift();
+        let processQueueCopy = processQueue;
+        let targetFloor = processQueueCopy.shift();
         let liftObj = findNearestLift(targetFloor);
         if (liftObj !== null && targetFloor !== null) {
             const floorDiff = targetFloor - liftObj.currentFloor;
             const nearestLiftEl = document.getElementById(liftObj.id);
-
             if (nearestLiftEl !== null) {
-                const oldTransformStr = nearestLiftEl.style.transform;
-                const oldPos = oldTransformStr ? parseInt(oldTransformStr.match(/translateY\((-?\d+)px\)/)[1]) : 0;
-                const distanceToBeTravelled = oldPos - (floorDiff * 165);
+                const distanceToBeTravelled = -(targetFloor * 165);
                 updateLiftsState(liftObj.id, true, targetFloor);
                 if (floorDiff === 0) {
                     await openAndCloseDoor(nearestLiftEl, liftObj.id, targetFloor);
                 } else {
                     moveLift(nearestLiftEl, distanceToBeTravelled, Math.abs(floorDiff));
-                    await waitForTime(2000 * Math.abs(floorDiff)).then(async () => {
-                        await openAndCloseDoor(nearestLiftEl, liftObj.id, targetFloor);
-                    });
+                    await waitForTime(2000 * Math.abs(floorDiff));
+                    await openAndCloseDoor(nearestLiftEl, liftObj.id, targetFloor);
                 }
             }
         }
-
+        processQueue=processQueueCopy;
     }
 }
 const openAndCloseDoor = async (nearestLiftEl, nearestLiftId, targetFloor) => {
@@ -103,10 +100,10 @@ const isProcessQueueAlreadyContainRequest = (targetFloor) => {
 const isTargetFloorAlreadyContainsLift = (targetFloor) => {
     for (let i = 0; i < liftsState.length; i++) {
         if (liftsState[i].currentFloor === targetFloor) {
-            return true;
+            return liftsState[i];
         }
     }
-    return false;
+    return null;
 }
 const callLift = async (targetFloor) => {
     if (isProcessQueueAlreadyContainRequest(targetFloor)) {
@@ -170,14 +167,25 @@ const stimulate = () => {
     const noOfLifts = parseInt(document.getElementById('noOfLifts')?.value);
     let errorMsg = getErrorMsg(noOfFloors, noOfLifts);
     if (errorMsg !== '') {
-        document.querySelector('.stimulationError').innerHTML = errorMsg;
+        document.querySelector('.stimulationError')?.innerHTML = errorMsg;
 
     }
     else {
-        document.querySelector('.liftStimulationForm').style.display = 'none';
+        document.querySelector('.liftStimulationForm')?.style.display = 'none';
+        document.querySelector('.backBtn')?.style.display = 'block';
         const buildingEl = document.getElementById('building');
         buildingEl.innerHTML = '';
         generateBuildingLayout(noOfFloors, noOfLifts, buildingEl);
         initializeLiftsState(noOfLifts);
+        document.querySelector('.building')?.style.display = 'block';
     }
+}
+
+const reset =()=>{
+    document.getElementById('noOfFloors')?.value='';
+    document.getElementById('noOfLifts')?.value='';
+    document.querySelector('.stimulationError')?.innerHTML='';
+    document.querySelector('.liftStimulationForm')?.style.display = 'flex';
+    document.querySelector('.building')?.style.display = 'none';
+    document.querySelector('.backBtn')?.style.display = 'none';
 }
