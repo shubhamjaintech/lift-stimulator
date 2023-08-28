@@ -167,12 +167,12 @@ const stimulate = () => {
     const noOfLifts = parseInt(document.getElementById('noOfLifts')?.value);
     let errorMsg = getErrorMsg(noOfFloors, noOfLifts);
     if (errorMsg !== '') {
-        document.querySelector('.stimulationError')?.innerHTML = errorMsg;
+        document.querySelector('.stimulationError').innerHTML = errorMsg;
 
     }
     else {
-        document.querySelector('.liftStimulationForm')?.style.display = 'none';
-        document.querySelector('.backBtn')?.style.display = 'block';
+        document.querySelector('.liftStimulationForm').style.display = 'none';
+        document.querySelector('.backBtn').style.display = 'block';
         const buildingEl = document.getElementById('building');
         buildingEl.innerHTML = '';
         generateBuildingLayout(noOfFloors, noOfLifts, buildingEl);
@@ -182,10 +182,10 @@ const stimulate = () => {
 }
 
 const reset =()=>{
-    document.getElementById('noOfFloors')?.value='';
-    document.getElementById('noOfLifts')?.value='';
-    document.querySelector('.stimulationError')?.innerHTML='';
-    document.querySelector('.liftStimulationForm')?.style.display = 'flex';
-    document.querySelector('.building')?.style.display = 'none';
-    document.querySelector('.backBtn')?.style.display = 'none';
+    document.getElementById('noOfFloors').value='';
+    document.getElementById('noOfLifts').value='';
+    document.querySelector('.stimulationError').innerHTML='';
+    document.querySelector('.liftStimulationForm').style.display = 'flex';
+    document.querySelector('.building').style.display = 'none';
+    document.querySelector('.backBtn').style.display = 'none';
 }
