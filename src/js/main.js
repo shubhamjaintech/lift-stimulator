@@ -177,7 +177,7 @@ const stimulate = () => {
         buildingEl.innerHTML = '';
         generateBuildingLayout(noOfFloors, noOfLifts, buildingEl);
         initializeLiftsState(noOfLifts);
-        document.querySelector('.building')?.style.display = 'block';
+        document.querySelector('.building').style.display = 'block';
     }
 }
 
