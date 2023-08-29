@@ -24,10 +24,6 @@ const updateLiftsState = (liftId, isMoving, floor) => {
 }
 const findNearestLift = (targetFloor) => {
     let availableLifts;
-    // const abc = isTargetFloorAlreadyContainsLift(targetFloor);
-    // if (abc) {
-    //     return abc;
-    // }
     availableLifts = liftsState.filter((lift) => lift.isMoving === false);
     if (availableLifts.length === 0) return null;
     let minDistance = Infinity;
@@ -99,14 +95,14 @@ const isProcessQueueAlreadyContainRequest = (targetFloor) => {
 }
 const isTargetFloorAlreadyContainsLift = (targetFloor) => {
     for (let i = 0; i < liftsState.length; i++) {
-        if (liftsState[i].currentFloor === targetFloor) {
-            return liftsState[i];
+        if (liftsState[i].currentFloor === targetFloor && liftsState[i].isMoving ) {
+            return true;
         }
     }
-    return null;
+    return false;
 }
 const callLift = async (targetFloor) => {
-    if (isProcessQueueAlreadyContainRequest(targetFloor)) {
+    if (isProcessQueueAlreadyContainRequest(targetFloor) || isTargetFloorAlreadyContainsLift(targetFloor)) {
         return;
     }
     processQueue.push(targetFloor);
