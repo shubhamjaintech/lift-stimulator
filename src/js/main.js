@@ -93,16 +93,16 @@ const isProcessQueueAlreadyContainRequest = (targetFloor) => {
     }
     return false;
 }
-const isTargetFloorAlreadyContainsLift = (targetFloor) => {
-    for (let i = 0; i < liftsState.length; i++) {
-        if (liftsState[i].currentFloor === targetFloor && liftsState[i].isMoving ) {
-            return true;
-        }
-    }
-    return false;
-}
+// const isTargetFloorAlreadyContainsLift = (targetFloor) => {
+//     for (let i = 0; i < liftsState.length; i++) {
+//         if (liftsState[i].currentFloor === targetFloor && liftsState[i].isMoving ) {
+//             return true;
+//         }
+//     }
+//     return false;
+// }
 const callLift = async (targetFloor) => {
-    if (isProcessQueueAlreadyContainRequest(targetFloor) || isTargetFloorAlreadyContainsLift(targetFloor)) {
+    if (isProcessQueueAlreadyContainRequest(targetFloor)) {
         return;
     }
     processQueue.push(targetFloor);
