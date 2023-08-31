@@ -85,14 +85,14 @@ const openAndCloseDoor = async (nearestLiftEl, nearestLiftId, targetFloor) => {
     await processQueuedRequests();
 }
 
-const isProcessQueueAlreadyContainRequest = (targetFloor) => {
-    for (let i = 0; i < processQueue.length; i++) {
-        if (processQueue[i] === targetFloor) {
-            return true;
-        }
-    }
-    return false;
-}
+// const isProcessQueueAlreadyContainRequest = (targetFloor) => {
+//     for (let i = 0; i < processQueue.length; i++) {
+//         if (processQueue[i] === targetFloor) {
+//             return true;
+//         }
+//     }
+//     return false;
+// }
 // const isTargetFloorAlreadyContainsLift = (targetFloor) => {
 //     for (let i = 0; i < liftsState.length; i++) {
 //         if (liftsState[i].currentFloor === targetFloor && liftsState[i].isMoving ) {
@@ -102,9 +102,9 @@ const isProcessQueueAlreadyContainRequest = (targetFloor) => {
 //     return false;
 // }
 const callLift = async (targetFloor) => {
-    if (isProcessQueueAlreadyContainRequest(targetFloor)) {
-        return;
-    }
+    // if (isProcessQueueAlreadyContainRequest(targetFloor)) {
+    //     return;
+    // }
     processQueue.push(targetFloor);
     let availableLifts = liftsState.filter((lift) => lift.isMoving === false);
     if (availableLifts.length === 0 || processQueue.length > 1) {
